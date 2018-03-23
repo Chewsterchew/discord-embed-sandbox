@@ -8,7 +8,7 @@ $(document).ready(function() {
     useVars: false
   };
 
-  var fields = 1;
+  var fields = 0;
 
   var source = '';
 
@@ -170,16 +170,20 @@ $(document).ready(function() {
 
       var field = _ref;
 
-      $('.embed-inner .fields').append('\n        <div class="field ' + (
-      field.inline && 'inline') + '">\n          <div class="field-name">' + field.name + '</div>\n          <div class="field-value">' + field.value + '</div>\n        </div>\n      ');
+      if (fields > 0 && field.name != undefined && field.value != undefined) {
+        $('.embed-inner .fields').append('\n        <div class="field ' + (
+        field.inline && 'inline') + '">\n          <div class="field-name">' + field.name + '</div>\n          <div class="field-value">' + field.value + '</div>\n        </div>\n      ');
+      }
 
       // add field
-      if (switches.useVars) {
-        source += 'e.add_field(name: ' + field.name + ', value: ' + field.value + ', inline: ' + (
-        field.inline && 'true' || 'false') + ')\n';
-      } else {
-        source += 'e.add_field(name: ' + field.name + ', value: ' + field.value + ', inline: ' + (
-        field.inline && 'true' || 'false') + ')\n';
+      if (fields > 0 && field.name != undefined && field.value != undefined) {
+        if (switches.useVars) {
+          source += 'e.add_field(name: ' + field.name + ', value: ' + field.value + ', inline: ' + (
+          field.inline && 'true' || 'false') + ')\n';
+        } else {
+          source += 'e.add_field(name: ' + field.name + ', value: ' + field.value + ', inline: ' + (
+          field.inline && 'true' || 'false') + ')\n';
+        }
       }
     }
 
