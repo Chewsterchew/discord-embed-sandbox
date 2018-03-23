@@ -1,6 +1,6 @@
 'use strict';
 
-$(document).ready(function () {
+$(document).ready(function() {
   var switches = {
     title: false,
     url: false,
@@ -23,7 +23,9 @@ $(document).ready(function () {
     url: '',
     thumb_url: '',
     color: '',
-    fields: [{}],
+    fields: [
+      {}
+    ],
     footer: ''
   };
 
@@ -37,16 +39,16 @@ $(document).ready(function () {
     resetEmbed();
 
     // add basic embed generation to source
-    source = 'embed=discord.Embed(';
+    source = 'event.channel.send_embed do |e|';
 
     if (embed.url) {
       $('.embed-inner').append('<div class="embed-title"><a href="' + embed.url + '">' + embed.title + '</a></div>');
 
       // update source
       if (switches.useVars) {
-        source += 'title=' + embed.title + ', url=' + embed.url;
+        source += "\n" + 'e.title = ' + embed.title + "\n" + 'e.url = ' + embed.url;
       } else {
-        source += 'title="' + embed.title + '", url="' + embed.url + '"';
+        source += "\n" + 'e.title = "' + embed.title + "\"\n" + 'e.url = "' + embed.url + '"';
       }
     } else if (embed.title.length === 0) {
       source += "";
@@ -55,9 +57,9 @@ $(document).ready(function () {
 
       // update source
       if (switches.useVars) {
-        source += 'title=' + embed.title;
+        source += "\n" + 'e.title =' + embed.title;
       } else {
-        source += 'title="' + embed.title + '"';
+        source += "\n" + 'e.title = "' + embed.title + '"';
       }
 
     }
@@ -65,15 +67,11 @@ $(document).ready(function () {
     if (embed.description) {
       $('.embed-inner').append('<div class="embed-description">' + embed.description + '</div>');
 
-      if (embed.title.length > 0 || embed.url.length > 0) {
-        source += ', '
-      }
-
       // update source
       if (switches.useVars) {
-        source += 'description=' + embed.description;
+        source += "\n" + 'e.description = ' + embed.description;
       } else {
-        source += 'description="' + embed.description + '"';
+        source += "\n" + 'e.description = "' + embed.description + '"';
       }
     }
 
@@ -81,36 +79,36 @@ $(document).ready(function () {
       $('.side-colored').css('background-color', embed.color);
 
       if (embed.title.length > 0 || embed.url.length > 0) {
-        source += ', '
+        source += "\n"
       }
 
       // update source
-      source += 'color=0x' + embed.color.substr(1);
+      source += 'e.color = "' + embed.color.substr(1) + '"';
     }
 
     // finished the basic setup
-    source += ')\n';
+    source += '\n';
 
     if (embed.author.name) {
       // add author to source
-      source += 'embed.set_author(';
+      source += 'e.author = { ';
 
       $('.embed-title').before('<div class="embed-author"><a class="embed-author-name" href="' + embed.author.url + '">' + embed.author.name + '</a></div>');
 
       // update source
       if (switches.useVars) {
-        source += 'name=' + embed.author.name;
+        source += 'name: ' + embed.author.name;
       } else {
-        source += 'name="' + embed.author.name + '"';
+        source += 'name: "' + embed.author.name + '"';
       }
 
-      if(embed.author.url) {
+      if (embed.author.url) {
         source += ', ';
 
         if (switches.useVars) {
-          source += 'url=' + embed.author.url;
+          source += 'url: ' + embed.author.url;
         } else {
-          source += 'url="' + embed.author.url + '"';
+          source += 'url: "' + embed.author.url + '"';
         }
       }
 
@@ -121,59 +119,67 @@ $(document).ready(function () {
 
         // update source
         if (switches.useVars) {
-          source += 'icon_url=' + embed.author.icon;
+          source += 'icon_url: ' + embed.author.icon;
         } else {
-          source += ', icon_url="' + embed.author.icon + '"';
+          source += ' icon_url: "' + embed.author.icon + '"';
         }
       }
 
       // finish author
-      source += ')\n';
+      source += ' } \n';
     }
 
     if (embed.thumb_url) {
       // add thumbnail
-      source += 'embed.set_thumbnail(';
+      source += 'e.thumbnail = { ';
 
       $('.card.embed .card-block').append('<img class="embed-thumb" src="' + embed.thumb_url + '" />');
       $('.embed-thumb').height($('.embed-thumb')[0].naturalHeight);
 
       // update source
       if (switches.useVars) {
-        source += 'url=' + embed.thumb_url;
+        source += 'url: ' + embed.thumb_url;
       } else {
-        source += 'url="' + embed.thumb_url + '"';
+        source += 'url: "' + embed.thumb_url + '"';
       }
 
       // finish thumbnail
-      source += ')\n';
+      source += ' } \n';
     }
 
     if (embed.fields.length > 0) {
       $('.embed-inner').append('<div class="fields"></div>');
     }
 
-    for (var _iterator = embed.fields, _isArray = Array.isArray(_iterator), _i = 0, _iterator = _isArray ? _iterator : _iterator[Symbol.iterator]();;) {
+    for (
+      var _iterator = embed.fields, _isArray = Array.isArray(_iterator), _i = 0, _iterator = _isArray
+      ? _iterator
+      : _iterator[Symbol.iterator]();;) {
       var _ref;
 
       if (_isArray) {
-        if (_i >= _iterator.length) break;
+        if (_i >= _iterator.length)
+          break;
         _ref = _iterator[_i++];
       } else {
         _i = _iterator.next();
-        if (_i.done) break;
+        if (_i.done)
+          break;
         _ref = _i.value;
       }
 
       var field = _ref;
 
-      $('.embed-inner .fields').append('\n        <div class="field ' + (field.inline && 'inline') + '">\n          <div class="field-name">' + field.name + '</div>\n          <div class="field-value">' + field.value + '</div>\n        </div>\n      ');
+      $('.embed-inner .fields').append('\n        <div class="field ' + (
+      field.inline && 'inline') + '">\n          <div class="field-name">' + field.name + '</div>\n          <div class="field-value">' + field.value + '</div>\n        </div>\n      ');
 
       // add field
       if (switches.useVars) {
-        source += 'embed.add_field(name=' + field.name + ', value=' + field.value + ', inline=' + (field.inline && 'True' || 'False') + ')\n';
+        source += 'e.add_field(name: ' + field.name + ', value: ' + field.value + ', inline: ' + (
+        field.inline && 'true' || 'false') + ')\n';
       } else {
-        source += 'embed.add_field(name=' + field.name + ', value=' + field.value + ', inline=' + (field.inline && 'True' || 'False') + ')\n';
+        source += 'e.add_field(name: ' + field.name + ', value: ' + field.value + ', inline: ' + (
+        field.inline && 'true' || 'false') + ')\n';
       }
     }
 
@@ -182,14 +188,14 @@ $(document).ready(function () {
 
       // add footer
       if (switches.useVars) {
-        source += 'embed.set_footer(text=' + embed.footer + ')\n';
+        source += 'e.footer = Discordrb::Webhooks::EmbedFooter.new(text=' + embed.footer + ')\n';
       } else {
-        source += 'embed.set_footer(text="' + embed.footer + '")\n';
+        source += 'e.footer = Discordrb::Webhooks::EmbedFooter.new(text="' + embed.footer + '")\n';
       }
     }
 
     // add send function
-    source += 'await self.bot.say(embed=embed)\n';
+    source += 'end\n';
 
     // code
     $('.source').text(source);
@@ -204,20 +210,29 @@ $(document).ready(function () {
     $('.input-fields').html('');
 
     var _loop = function _loop(i) {
-      $('.input-fields').append('<div class="form-group row">\n        <div class="col-sm-4">\n          <input class="form-control" id="field-' + i + '-name" type="text" placeholder="name" value="' + (embed.fields[i].name !== undefined ? embed.fields[i].name : '') + '" />\n        </div>\n        <div class="col-sm-4">\n          <input class="form-control" id="field-' + i + '-value" type="text" placeholder="value" value="' + (embed.fields[i].value !== undefined ? embed.fields[i].value : '') + '" />\n        </div>\n        <div class="col-sm-2">\n          <div class="form-check">\n            <label class="form-check-label">\n              <input class="form-check-input" id="field-' + i + '-inline" type="checkbox" ' + (embed.fields[i].inline !== undefined ? 'checked="checked"' : '') + '> Inline\n            </label>\n          </div>\n        </div>\n        <div class="col-sm-2">\n          <button id="field-' + i + '-delete" class="btn btn-danger">Delete</button>\n        </div>\n      </div>');
-      $('#field-' + i + '-name').keyup(function () {
+      $('.input-fields').append('<div class="form-group row">\n        <div class="col-sm-4">\n          <input class="form-control" id="field-' + i + '-name" type="text" placeholder="name" value="' + (
+        embed.fields[i].name !== undefined
+        ? embed.fields[i].name
+        : '') + '" />\n        </div>\n        <div class="col-sm-4">\n          <input class="form-control" id="field-' + i + '-value" type="text" placeholder="value" value="' + (
+        embed.fields[i].value !== undefined
+        ? embed.fields[i].value
+        : '') + '" />\n        </div>\n        <div class="col-sm-2">\n          <div class="form-check">\n            <label class="form-check-label">\n              <input class="form-check-input" id="field-' + i + '-inline" type="checkbox" ' + (
+        embed.fields[i].inline !== undefined
+        ? 'checked="checked"'
+        : '') + '> Inline\n            </label>\n          </div>\n        </div>\n        <div class="col-sm-2">\n          <button id="field-' + i + '-delete" class="btn btn-danger">Delete</button>\n        </div>\n      </div>');
+      $('#field-' + i + '-name').keyup(function() {
         updateFieldName(i, $('#field-' + i + '-name').val());
       });
 
-      $('#field-' + i + '-value').keyup(function () {
+      $('#field-' + i + '-value').keyup(function() {
         updateFieldValue(i, $('#field-' + i + '-value').val());
       });
 
-      $('#field-' + i + '-inline').click(function () {
+      $('#field-' + i + '-inline').click(function() {
         updateFieldInline(i, $('#field-' + i + '-inline').is(':checked'));
       });
 
-      $('#field-' + i + '-delete').click(function (e) {
+      $('#field-' + i + '-delete').click(function(e) {
         e.preventDefault();
         deleteField(i);
       });
@@ -227,7 +242,7 @@ $(document).ready(function () {
       _loop(i);
     }
     $('.input-fields').append('<button id="add-field" class="btn btn-success">Add field</button>');
-    $('#add-field').click(function (e) {
+    $('#add-field').click(function(e) {
       e.preventDefault();
       addField();
     });
@@ -258,7 +273,7 @@ $(document).ready(function () {
   }
 
   function addField() {
-    embed.fields.push({ inline: true });
+    embed.fields.push({inline: true});
     fields += 1;
     generateInputFields(fields);
   }
@@ -308,7 +323,7 @@ $(document).ready(function () {
     updateEmbed(embed);
   }
 
-  $('#form').submit(function (e) {
+  $('#form').submit(function(e) {
     e.preventDefault();
   });
 
@@ -331,7 +346,7 @@ $(document).ready(function () {
     $('#' + type + '-feedback').remove();
   }
 
-  $('#title').keyup(function () {
+  $('#title').keyup(function() {
     var item = $('#title');
     var title = item.val();
 
@@ -339,7 +354,7 @@ $(document).ready(function () {
     updateTitle(title);
   });
 
-  $('#url').keyup(function () {
+  $('#url').keyup(function() {
     var item = $('#url');
     var url = item.val();
 
@@ -352,7 +367,7 @@ $(document).ready(function () {
     }
   });
 
-  $('#icon').keyup(function () {
+  $('#icon').keyup(function() {
     var item = $('#icon');
     var icon = item.val();
 
@@ -365,7 +380,7 @@ $(document).ready(function () {
     }
   });
 
-  $('#description').keyup(function () {
+  $('#description').keyup(function() {
     var item = $('#description');
     var description = item.val();
     addSuccess(item, 'description');
@@ -373,11 +388,11 @@ $(document).ready(function () {
     updateDescription(description);
   });
 
-  $('#color').change(function () {
+  $('#color').change(function() {
     updateColor($('#color').val());
   });
 
-  $('#author_name').keyup(function () {
+  $('#author_name').keyup(function() {
     var item = $('#author_name');
     var author_name = item.val();
 
@@ -386,7 +401,7 @@ $(document).ready(function () {
     updateAuthorName(author_name);
   });
 
-  $('#author_url').keyup(function () {
+  $('#author_url').keyup(function() {
     var item = $('#author_url');
     var author_url = item.val();
 
@@ -399,7 +414,7 @@ $(document).ready(function () {
     }
   });
 
-  $('#author_icon').keyup(function () {
+  $('#author_icon').keyup(function() {
     var item = $('#author_icon');
     var author_icon = item.val();
 
@@ -412,7 +427,7 @@ $(document).ready(function () {
     }
   });
 
-  $('#footer').keyup(function () {
+  $('#footer').keyup(function() {
     var item = $('#footer');
     var footer = item.val();
 
@@ -421,7 +436,7 @@ $(document).ready(function () {
     updateFooter(footer);
   });
 
-  $('#useVars').click(function () {
+  $('#useVars').click(function() {
     switches.useVars = !switches.useVars;
     updateEmbed(embed);
   });
