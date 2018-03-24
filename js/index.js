@@ -192,9 +192,9 @@ $(document).ready(function() {
 
       // add footer
       if (switches.useVars) {
-        source += 'e.footer = Discordrb::Webhooks::EmbedFooter.new(text=' + embed.footer + ')\n';
+        source += 'e.footer = Discordrb::Webhooks::EmbedFooter.new(text: ' + embed.footer + ')\n';
       } else {
-        source += 'e.footer = Discordrb::Webhooks::EmbedFooter.new(text="' + embed.footer + '")\n';
+        source += 'e.footer = Discordrb::Webhooks::EmbedFooter.new(text: "' + embed.footer + '")\n';
       }
     }
 
